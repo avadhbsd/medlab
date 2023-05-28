@@ -17,3 +17,200 @@ model User {
   updatedAt DateTime @updatedAt
   username  String   @unique
 }
+
+// Patient
+model Patient {
+  patient_id       Int       @id @default(autoincrement())
+  first_name       String
+  last_name        String
+  date_of_birth    DateTime
+  gender           String
+  address          String
+  contact_number   String
+  email            String
+  vegetarian       Boolean
+  religion         String
+  // ... other fields related to patient information
+
+  orders           Order[]
+}
+
+// Order
+model Order {
+  order_id         Int       @id @default(autoincrement())
+  patient_id       Int
+  order_date       DateTime
+  // ... other fields related to an order
+
+  patient          Patient   @relation(fields: [patient_id], references: [patient_id])
+  samples          Sample[]
+  reports          Report[]
+  billing          Billing?
+}
+
+// Sample
+model Sample {
+  sample_id        Int       @id @default(autoincrement())
+  order_id         Int
+  sample_number    String
+  sample_date      DateTime
+  // ... other fields related to a sample
+
+  order            Order     @relation(fields: [order_id], references: [order_id])
+  testResults      TestResult[]
+}
+
+// TestResult
+model TestResult {
+  test_result_id   Int       @id @default(autoincrement())
+  sample_id        Int
+  test_id          Int
+  result_value     Float
+  result_date      DateTime
+  // ... other fields related to a test result
+
+  sample           Sample    @relation(fields: [sample_id], references: [sample_id])
+  test             Test      @relation(fields: [test_id], references: [test_id])
+}
+
+// Test
+model Test {
+  test_id          Int       @id @default(autoincrement())
+  test_name        String
+  test_description String
+  // ... other fields related to a test
+
+  testResults      TestResult[]
+  department       Department @relation(fields: [department_id], references: [department_id])
+  equipment        Equipment[]
+  supplier         Supplier[]
+  inventories      Inventory[]
+}
+
+// Doctor
+model Doctor {
+  doctor_id        Int       @id @default(autoincrement())
+  first_name       String
+  last_name        String
+  contact_number   String
+  email            String
+  // ... other fields related to doctor information
+
+  referrals        Referral[]
+}
+
+// Referral
+model Referral {
+  referral_id      Int       @id @default(autoincrement())
+  patient_id       Int
+  doctor_id        Int
+  referral_date    DateTime
+  reason           String
+  // ... other fields related to a referral
+
+  patient          Patient   @relation(fields: [patient_id], references: [patient_id])
+  doctor           Doctor    @relation(fields: [doctor_id], references: [doctor_id])
+}
+
+// Technician
+model Technician {
+  technician_id    Int       @id @default(autoincrement())
+  first_name       String
+  last_name        String
+  contact_number   String
+  email            String
+  // ... other fields related to technician information
+
+  testResults      TestResult[]
+  labAssistants    LabAssistant[]
+}
+
+// Report
+model Report {
+  report_id        Int       @id @default(autoincrement())
+  sample_id        Int
+  technician_id    Int
+  report_date      DateTime
+  report_content   String
+  // ... other fields related to a report
+
+  sample           Sample    @relation(fields: [sample_id], references: [sample_id])
+  technician       Technician @relation(fields: [technician_id], references: [technician_id])
+}
+
+// Department
+model Department {
+  department_id    Int       @id @default(autoincrement())
+  name             String
+  // ... other fields related to a department
+
+  tests            Test[]
+}
+
+// Billing
+model Billing {
+  billing_id       Int       @id @default(autoincrement())
+  order_id         Int
+  amount           Float
+  billing_date     DateTime
+  // ... other fields related to billing
+
+  order            Order     @relation(fields: [order_id], references: [order_id])
+}
+
+// LabAssistant
+model LabAssistant {
+  lab_assistant_id Int       @id @default(autoincrement())
+  first_name       String
+  last_name        String
+  contact_number   String
+  email            String
+  // ... other fields related to lab assistant information
+
+  samples          Sample[]
+  technicians      Technician[]
+}
+
+// Lab
+model Lab {
+  lab_id           Int       @id @default(autoincrement())
+  name             String
+  address          String
+  contact_number   String
+  email            String
+  // ... other fields related to lab information
+
+  technicians      Technician[]
+  labAssistants    LabAssistant[]
+}
+
+// Equipment
+model Equipment {
+  equipment_id     Int       @id @default(autoincrement())
+  name             String
+  // ... other fields related to equipment
+
+  tests            Test[]
+}
+
+// Supplier
+model Supplier {
+  supplier_id      Int       @id @default(autoincrement())
+  name             String
+  address          String
+  contact_number   String
+  email            String
+  // ... other fields related to supplier information
+
+  tests            Test[]
+}
+
+// Inventory
+model Inventory {
+  inventory_id     Int       @id @default(autoincrement())
+  test_id          Int
+  stock_count      Int
+  // ... other fields related to inventory
+
+  test             Test      @relation(fields: [test_id], references: [test_id])
+}
