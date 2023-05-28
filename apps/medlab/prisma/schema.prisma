@@ -17,10 +17,3 @@ model User {
   updatedAt DateTime @updatedAt
   username  String   @unique
 }
-
-model Labtest {
-  createdAt DateTime @default(now())
-  id        String   @id @default(cuid())
-  name      String
-  updatedAt DateTime @updatedAt
-}
